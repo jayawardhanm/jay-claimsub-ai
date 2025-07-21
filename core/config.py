@@ -11,7 +11,7 @@ class Settings:
     AUTO_APPROVE_AMOUNT: float = float(os.getenv("AUTO_APPROVE_AMOUNT", 5000))
     
     # OpenAI/LLM settings
-    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "your-openai-api-key-here")
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "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")
     OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
     USE_LLM: bool = os.getenv("USE_LLM", "false").lower() == "true"
 

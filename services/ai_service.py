@@ -1,5 +1,3 @@
-from app.models import Claim, Provider, Risk
-from sqlalchemy.orm import Session
 from app.core.config import settings
 
 REASON_CODES = {
@@ -11,43 +9,42 @@ REASON_CODES = {
     "DOC_REQUIRED": "Additional documentation required"
 }
 
-def assess_risk(claim: Claim, provider: Provider, risk: Risk, db: Session) -> float:
-    # Dummy AI risk logic for demonstration
+def assess_risk(claim, provider, risk) -> float:
     score = 0.0
-    if risk.risk_level == "high":
+    if risk.get("risk_level") == "high":
         score += 0.8
-    elif risk.risk_level == "medium":
+    elif risk.get("risk_level") == "medium":
         score += 0.5
     else:
         score += 0.2
 
-    # Example: Increase score for high amount claims
+    # Increase score for high amount claims
     try:
-        if claim.summary and "amount" in claim.summary:
-            amount = float(claim.summary.split("amount:")[1].split()[0])
+        if claim.get("summary") and "amount" in claim["summary"]:
+            amount = float(claim["summary"].split("amount:")[1].split()[0])
             if amount > settings.AUTO_APPROVE_AMOUNT:
                 score += 0.3
     except Exception:
         pass
 
-    # Example: Provider location risk
-    if provider.location and provider.location in ["fraud_city", "unknown"]:
+    # Provider location risk
+    if provider.get("location") in ["fraud_city", "unknown"]:
         score += 0.2
 
     return min(score, 1.0)
 
-def decide_claim(status_score: float, claim: Claim, provider: Provider, risk: Risk) -> (str, str, str):
-    # Decision logic based on the score
-    if status_score < settings.AUTO_APPROVE_THRESHOLD and "amount: " in (claim.summary or ""):
-        amount = float(claim.summary.split("amount:")[1].split()[0])
+def decide_claim(score, claim, provider, risk):
+    summary = claim.get("summary") or ""
+    if score < settings.AUTO_APPROVE_THRESHOLD and "amount:" in summary:
+        amount = float(summary.split("amount:")[1].split()[0])
         if amount <= settings.AUTO_APPROVE_AMOUNT:
             return "Approved", "AUTO_APPR", REASON_CODES["AUTO_APPR"]
-    if status_score >= settings.AUTO_DENY_THRESHOLD:
-        if risk.risk_level == "high":
+    if score >= settings.AUTO_DENY_THRESHOLD:
+        if risk.get("risk_level") == "high":
             return "Denied", "HIGH_RISK_PROVIDER", REASON_CODES["HIGH_RISK_PROVIDER"]
         return "Denied", "FRAUD_SUSPECTED", REASON_CODES["FRAUD_SUSPECTED"]
-    if status_score >= settings.RISK_MEDIUM:
+    if score >= settings.RISK_MEDIUM:
         return "Pending", "MANUAL_REVIEW", REASON_CODES["MANUAL_REVIEW"]
-    if status_score < settings.RISK_LOW:
+    if score < settings.RISK_LOW:
         return "Approved", "AUTO_APPR", REASON_CODES["AUTO_APPR"]
     return "Pending", "DOC_REQUIRED", REASON_CODES["DOC_REQUIRED"]
