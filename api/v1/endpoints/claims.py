@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.schemas import ClaimProcessRequest, ClaimProcessResponse
-from app.database import SessionLocal
-from app.services.claim_processor import process_claim, process_pending_claims
-from app.core.security import api_key_auth
+from schemas import ClaimProcessRequest, ClaimProcessResponse
+from database import SessionLocal
+from services.claim_processor import process_claim, process_pending_claims
+from core.security import api_key_auth
 
 router = APIRouter()
 

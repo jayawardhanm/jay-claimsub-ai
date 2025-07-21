@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from app.api.v1.endpoints.claims import router as claims_router
-from app.core.config import settings
-from app.database import engine, Base
+from api.v1.endpoints.claims import router as claims_router
+from core.config import settings
+from database import engine, Base
 
 app = FastAPI(
     title="Insurance Claim AI Service",

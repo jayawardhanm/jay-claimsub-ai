@@ -1,5 +1,5 @@
-from app.models import Claim, Provider, Risk
-from app.services.ai_service import assess_risk, decide_claim
+from models import Claim, Provider, Risk
+from services.ai_service import assess_risk, decide_claim
 from sqlalchemy.orm import Session
 
 def process_claim(claim_id: str, db: Session):
