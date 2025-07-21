@@ -2,3 +2,6 @@ fastapi
 uvicorn
 sqlalchemy
 pydantic
+openai
+requests
+python-dotenv
