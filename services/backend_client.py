@@ -33,3 +33,24 @@ def get_risk(risk_id):
     resp = requests.get(url, headers=get_headers())
     resp.raise_for_status()
     return resp.json()
+
+def get_patient(patient_id):
+    """Get patient information"""
+    url = f"{settings.BACKEND_URL}/patients/{patient_id}"
+    resp = requests.get(url, headers=get_headers())
+    resp.raise_for_status()
+    return resp.json()
+
+def get_insurance_policy(policy_id):
+    """Get insurance policy information"""
+    url = f"{settings.BACKEND_URL}/policies/{policy_id}"
+    resp = requests.get(url, headers=get_headers())
+    resp.raise_for_status()
+    return resp.json()
+
+def get_claim_riders(claim_id):
+    """Get claim riders associated with a claim"""
+    url = f"{settings.BACKEND_URL}/claims/{claim_id}/riders"
+    resp = requests.get(url, headers=get_headers())
+    resp.raise_for_status()
+    return resp.json()
